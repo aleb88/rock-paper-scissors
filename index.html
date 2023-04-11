@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Rock-Paper-Scissors game</title>
+</head>
+
+<body>
+  <h2>Choose your destiny:</h2>
+  <button type="button" id="rock" class="play">Rock</button>
+  <button type="button" id="paper" class="play">Paper</button>
+  <button type="button" id="scissors" class="play">Scissors</button>
+  <h2>Scoreboard</h2>
+  <label for="humanScore">You</label>
+  <input id="humanScore" size="2" value="0">
+  <label for="compScore">Computer</label>
+  <input id="compScore" size="2" value="0">
+  <p id="results"> </p>
+  <button type="button" id="reset" class="reset">Play Again</button>
+
+  <script>
+    /*
+    Create three buttons, one for each selection. Add an event listener to the buttons that calls playRound
+    function with the correct playerSelection every time a button is clicked. 
+    
+    Add a div for displaying results and change all of your console.logs into DOM methods.
+    Display the running score, and announce a winner of the game once one player reaches 5 points.
+    */
+    var resultsField = document.getElementById("results");
+    //returns a pseudorandom number between zero(inclusive) and max(exclusive)
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    function normalizeString(str) {
+      str = str.toLowerCase();
+      cap = str.charAt(0).toUpperCase();
+      str = cap + str.substring(1);
+      return str;
+    }
+
+    function compareSelections(playerSelection, computerSelection) {
+      if (playerSelection == computerSelection) return 3;
+      if ((playerSelection == "Rock" && computerSelection == "Scissors") ||
+        (playerSelection == "Paper" && computerSelection == "Rock") ||
+        (playerSelection == "Scissors" && computerSelection == "Paper")) {
+        return 2;
+      }
+      return 1;
+    }
+
+    function computerPlay() {
+      var num = getRandomInt(3);
+      if (num == 0) return "Rock";
+      if (num == 1) return "Paper";
+      return "Scissors";
+    }
+
+
+    function playRound(playerSelection, computerSelection) {
+      playerSelection = normalizeString(playerSelection);
+      var result = compareSelections(playerSelection, computerSelection);
+      if (result == 2) {
+        resultsField.textContent = "You win! " + playerSelection + " beats " + computerSelection;
+      } else if (result == 1) {
+        resultsField.textContent = "You lose! " + computerSelection + " beats " + playerSelection;
+      }
+      else {
+        resultsField.textContent = "You tie! " + playerSelection + " ties with " + computerSelection;
+      }
+      return result;
+    }
+
+    function playAgain() {
+      document.getElementById("humanScore").value = 0;
+      document.getElementById("compScore").value = 0;
+      resultsField.textContent = " ";
+    }
+
+    document.getElementById("reset").addEventListener('click', playAgain);
+    // buttons is a node list. It looks and acts much like an array.
+    const buttons = document.querySelectorAll(".play");
+
+    // we use the .forEach method to iterate through each play button
+    buttons.forEach((button) => {
+
+      // and for each one we add a 'click' listener
+      button.addEventListener('click', (e) => {
+        if (document.getElementById("humanScore").value == 5 || document.getElementById("compScore").value == 5) {
+          return;
+        }
+
+        var playerSelection = button.id;
+        //  alert(playerSelection);
+        var computerSelection = computerPlay();
+        //  alert("computer played");
+        var result = playRound(playerSelection, computerSelection);
+        console.log(result);
+        if (result == 2) {
+          //add one to the player's scoreboard
+          document.getElementById("humanScore").value++;
+        } else if (result == 1) {
+          //add one to the computer's scoreboard
+          document.getElementById("compScore").value++;
+        }
+        //if score reaches 5 on either board, alert the winner
+        console.log(e.target);
+        if (document.getElementById("humanScore").value == 5) {
+          //    alert("Congrats! You have won!");
+          resultsField.textContent = "Congrats! You have won!";
+          //    document.getElementById("humanScore").value=0;
+          //    document.getElementById("compScore").value=0;
+        }
+        else if (document.getElementById("compScore").value == 5) {
+          // alert("The mighty machine wins once again!");
+          resultsField.textContent = "The mighty machine wins once again!";
+        }
+      });
+    });
+
+  </script>
+
+</body>
+
+</html>
